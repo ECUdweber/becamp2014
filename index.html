@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Basic CRUD App in an hour using Angular and GRAPE</title>
+		<title>Basic CRUD App using Angular and GRAPE</title>
 		<meta name="description" content="">
 		<meta name="author" content="Daniel Weber">
 		<meta name="apple-mobile-web-app-capable" content="yes" />
@@ -39,12 +39,18 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 				<section>
-					<h1>Angular / Grape CRUD App</h1>
-					<h3>Creating a simple CRUD webapp using AngularJS and Grape</h3>
+					<h1>Angular / Grape</h1>
+					<p class='spacer' />
+					<h3>Create simple CRUD app with AngularJS and Grape</h3>
+					<p class='spacer' />
 					<p>
 					  <small>Daniel Weber</small>
 					</p>
 				</section>
+				
+				<section>
+				  <p>This presentation will demonstrate how to create a simple CRUD webapp using Grape API and AngularJS. Before looking at our application, let's give a quick intro to both technologies.</p>                              
+				</section> 				
 
 				<section>
 				  <h3>What is <a href="http://intridea.github.io/grape/" target="_blank" class="grape">Grape</a>?</h3>
@@ -57,15 +63,6 @@
             Grape is a micro-framework that is used to create REST-like APIs in Ruby. It was designed to run on Rack as well as to fit into existing Rails or Sinatra applications.
           </p>          
 				</section>								
-
-				<section>
-				  <h3>Why Grape?</h3>				  
-          <ul>
-            <li class='fragment'>APIs in Rails are too entangled</li>
-            <li class='fragment'>APIs in Sinatra are too manual</li>
-            <li class='fragment'>Grape is Sinatra-inspired, but built for ease of development</li>
-          </ul>                                                                    
-				</section>
 				
 				<section>
 				  <h3><b>How do I use Grape?</b></h3>    
@@ -81,14 +78,13 @@
           </p> 
 				  <p class='spacer' />
 				  <p>
-            Grape runs as a Rack application, so we also need to make sure we have the various Rack components available.
-            <pre><code>gem 'grape'</code></pre>           
+            Easily used in a Rack application.           
           </p>                           
 				</section>				
                 
         <section>
           <h3>Basics of Grape</h3>        
-          
+                      
           <pre><code>
           
 require 'grape'
@@ -171,7 +167,7 @@ end
         </section>
         
         <section>
-          <h3>Yes! Use version</h3>
+          <h3>Yes! Use Grape's versioning feature</h3>
           
           <pre><code>
           
@@ -193,62 +189,904 @@ end
             <pre><code>{"version":"v1"}</code></pre>           
           </p>          
         </section>
+        
+				<section>
+				  <p>Let's put Grape aside for a moment and address the front-end.</p>                              
+				</section>        
 
-                <section>
-                  <h3>Example</h3>
-                  <pre><code>
-cushing@web1:~$ redis-cli lrange frontend:someapp.bitlathe.com 0 -1
-1) "someapp"
-2) "http://192.168.10.50:49155"
+        <!-- **************** START ANGULAR JS Intro Tutorial *********************** -->
 
-                    </code></pre>
-                </section>
-                <section>
-                  <h3>Feeding back-ends to redis</h3>
-                  <p>We currently populate the Redis config as part of the container upstart script</p>
-                  
-                  <pre class='stretch highlight bash'>
+        <section>
+          <h3>Angular</h3>          
+          
+          <p>
+            Angular was built with the CRUD application in mind, so it's a perfect fit for our application.
+          </p>
+          
+          <p class='spacer' />
+          
+          <ul>
+            <li class='fragment'>Perfect for a single page app.</li>
+            <li class='fragment'>Allows you to create software quicker and with much less effort</li>
+            <li class='fragment'>Results in applications that are easier to maintain</li>
+            <li class='fragment'>Improves testability</li>
+            <li class='fragment'>Dependency Injection</li>
+            <li class='fragment'>2-way data binding</li>
+            <li class='fragment'>directives..</li>
+          </ul>                                               
+        </section>
 
-env IDENTIFIER=library
-env DOMAIN=library.bitlathe.com
+        <section>
+          <h3>A few Angular Concepts needed for this app.</h3>          
+          
+          <p class='spacer' />
+          
+          <p class="fragment">
+            The ng-app Directive
+            <br><br>
+            The ng-app directive defines the root element of an AngularJS application and will automatically initialize the application when a web page is loaded.
+          </p>          
+          
+          <p class='spacer' />
+          
+          <p class="fragment">
+            The ng-model Directive
+            <br><br>
+            The ng-model directive binds the value of HTML controls (input, select, textarea) to application data.
+          </p>                                               
+        </section>  
+        
+        <section>
+          <h3>Repeating HTML Elements</h3>          
+          
+          <p class='spacer' />
+          
+          <p>
+            The ng-repeat Directive
+            <br><br>          
+            The ng-repeat directive clones HTML elements once for each item in a collection (in an array). 
+          </p>
+          
+          <pre><code>
+< div ng-app="" ng-init="names=['Jani','Hege','Kai']">
+  <ul>
+    <li ng-repeat="x in names">
+      { { x } }
+    </li>
+  </ul>
+< /div>
+          </code></pre>                                              
+        </section>  
+        
+       <section>
+          <h3>AngularJS Controllers</h3>          
+          
+          <p class='spacer' />
+          
+          <p>
+            AngularJS applications are controlled by controllers. The ng-controller directive defines the application controller.
+            <br><br>
+            A controller is a JavaScript Object, created by a standard JavaScript object constructor. The $scope of the controller is the application (the HTML element) it is referred from. 
+          </p>
+          
+          <pre><code>
+< div ng-app="" ng-controller="personController">
+  First Name: <input type="text" ng-model="person.firstName"><br>
+  Last Name: <input type="text" ng-model="person.lastName"><br>
+  <br>
+  Full Name: {{person.firstName + " " + person.lastName}}
+< /div>
 
-post-start script
-  <span class='fragment highlight-current-red'>export IPADDR=`ifconfig eth0 | grep 'inet addr:' | awk '{print $2}' | awk -F':' '{print$2}'`
-  export PORT=`/usr/bin/docker port $IDENTIFIER 80 | sed "s/0.0.0.0/$IPADDR/"`
-  while [ ! $PORT ] ; do
-    export PORT=`/usr/bin/docker port $IDENTIFIER 80 | sed "s/0.0.0.0/$IPADDR/"`
+<script>
+function personController($scope) {
+    $scope.person = {
+        firstName: "John",
+        lastName: "Doe"
+    };
+}
+</script> 
+          </code></pre>                                              
+        </section>  
+        
+       <section>
+          <h3>Controllers In External Files</h3>          
+          
+          <p class='spacer' />
+          
+          <p>
+            In larger applications, it is common to store controllers in external files. 
+          </p>
+          
+          <pre><code>
+<script src="personController.js"></script>
+          </code></pre>                                              
+        </section>   
+        
+        <section>
+          <h3>Filters</h3>          
+          
+          <p>
+            AngularJS has filters that can be used to transform data:
+          </p>
+          
+          <p class='spacer' />
+          
+          <ul>
+            <li class='fragment'>currency - Format a number to a currency format.</li>
+            <li class='fragment'>filter - Select a subset of items from an array.</li>
+            <li class='fragment'>lowercase - Format a string to lower case.</li>
+            <li class='fragment'>orderBy - Orders an array by an expression.</li>
+            <li class='fragment'>uppercase - Format a string to upper case.</li>
+          </ul>   
+          
+          <p class='spacer' />
+          
+				  <p class="fragment">
+            A filter can be added to an expression with a pipe character (|) and a filter.
+            <br><br>Example using uppercase filter:
+          </p>
+          
+          <pre class="fragment"><code>
+            < div ng-app="" ng-controller="personController">
+            
+              < p>The name is { { person.lastName | uppercase } }< /p>
+            
+            < /div>
+          </code></pre>                                   
+          </p>                                                      
+        </section>
+        
+        <!-- **************** END ANGULAR JS Intro Tutorial *********************** -->                           
 
-  done
-</span>
-  <span class='fragment highlight-current-red'>  /usr/bin/redis-cli rpush frontend:$DOMAIN $IDENTIFIER</span>
-  <span class='fragment highlight-current-red'>  /usr/bin/redis-cli rpush frontend:$DOMAIN http://$PORT </span>
-end script
-                  </pre>
-                </section>
-                <section>
-                  <h3>Problem solved<span class='fragment'>?...</span><span class='fragment'>Nope</span></h3>
-                  <p class='spacer' />
-                  <p class='fragment'>Hipache has some big advantages over more static reverse proxies, but there are still problems</p>
-                  <p class='spacer' />
-                  <ul>
-                    <li class='fragment'>Supports TLS but not SNI</li>
-                    <li class='fragment'>Our current setup doesn't really scale well to multiple proxies and hosts and still leaves us with a SPOF</li>
-                  </ul>
-                </section>
-                <section>
-                  <h3>future directions</h3>
-                  <p class='spacer' />
-                  <p>The next step is to enable distributed configuration storage and remove Hipache and Redis as SPOFs</p>
-                  <p class='spacer' />
-                  <ul>
-                    <li class='fragment'>Redis master/slave</li>
-                    <li class='fragment'>Etcd</li>
-                    <li class='fragment'>Consul</li>
-                  </ul>
-                </section>
-                <section>
-                  <h3>Thanks!</h3>
-                </section>
+        <section>
+          <h3>Our App</h3>          
+          
+          <p>
+            Let's take a look at an actual example.
+          </p>
+          
+          <p class='spacer' />
+          
+				  <p class="fragment">
+            We will create a simple beer review application with basic CRUD operations. We will have an API that uses Grape and will be ran as a Rack App. This is presented to our front 
+            end using passenger. We use nginx to serve both passenger and our rack app on port 8000 in our VM.          
+          </p> 
+          
+         <p class='spacer' />
+          
+				  <p class="fragment">
+            On to the code...          
+          </p>                           
+        </section>
+        
+        <section>
+          <h3>Let's start with the API. </h3>          
+          
+				  <p>
+            Our app needs to be able create, read, update and delete reviews of various beers the user has tried. So this gives us all the API routes currently needed.           
+          </p>
+          
+          <p>
+            So the basic setup for these routes will look like this:
+          </p> 
+          
+          <pre><code>          
+class Reviews < Grape::API  
+
+  resource :reviews do
+    get do
+	   # Retrieve all reviews
+    end	
+	
+    get ':id' do
+		  # Retrieve the review with passed id
+    end	
+	
+    post do
+      # Create a review based on parameters provided
+    end	
+	
+    put '/:id' do
+      # Update the review that has id passed with the parameters provided
+    end	
+	
+    delete '/:id' do
+      # Delete the review that matches passed id	  	 
+    end			
+  end
+
+end
+          </code></pre>                          
+        </section>        
+
+        <section>
+          <h3>Let's flesh it out one route at a time!</h3>
+          
+         <p class='spacer' />
+          
+				  <p>
+            We are using Active Record, so let's just define a Review in our API.          
+          </p>
+                     
+          <p class='spacer' />
+          
+          <pre><code>
+class Review < ActiveRecord::Base
+  attr_accessible :beer_name,:maker,:drink_again,:rating,:comments,:date_added
+
+  class Entity < Grape::Entity
+    expose :id,:beer_name,:maker,:drink_again,:rating,:comments,:date_added
+  end
+end          
+          </code></pre>          
+          
+        </section>
+        
+        <section>
+          <h3>GET /</h3>
+          
+          <p class='spacer' />
+          
+				  <p>
+            Our first method is a GET that retrieves all Reviews in the database.          
+          </p>
+                     
+          <p class='spacer' />          
+          
+          <pre><code>          
+  get do
+  	Review.all
+  end	
+          </code></pre>        
+          
+          <p class='spacer' />
+          
+				  <p>
+            It really is that simple.          
+          </p>             
+          
+        </section>  
+        
+        <section>
+          <h3>GET /:id</h3>
+          
+          <p class='spacer' />
+          
+				  <p>
+            Next, we need to be able to retrieve an existing review. Just pass in the id you wish to find.          
+          </p>
+                     
+          <p class='spacer' />          
+          
+          <pre><code>          
+  get ':id' do
+		Review.find(params[:id])
+  end		
+          </code></pre>        
+          
+          <p class='spacer' />
+          
+				  <p>
+            This will retrieve the review that matches id passed using ActiveRecord.          
+          </p>             
+          
+        </section>  
+        
+        <section>
+          <h3>POST /</h3>
+          
+          <p class='spacer' />
+          
+				  <p>
+            We need a way to create a new review.           
+          </p>
+                     
+          <p class='spacer' />          
+          
+          <pre><code>          
+post do
+  review = Review.new
+  review.beer_name = params[:beer_name]
+  review.maker = params[:maker]
+  review.drink_again = params[:drink_again]
+  review.rating = params[:rating]
+  review.comments = params[:comments]
+  review.save!
+
+  status 201
+end		
+          </code></pre>        
+          
+          <p class='spacer' />
+          
+				  <p>
+            We create a new review with ActiveRecord, set all the attributes and then save the record.          
+          </p>             
+          
+        </section> 
+        
+        <section>
+          <h3>PUT /:ID</h3>
+          
+          <p class='spacer' />
+          
+				  <p>
+            Now that we can create new reviews, we need to be able to edit an existing one.           
+          </p>
+                     
+          <p class='spacer' />          
+          
+          <pre><code>          
+put '/:id' do
+  review = Review.find(params[:id])
+  review.beer_name = params[:beer_name]
+  review.maker = params[:maker]
+  review.drink_again = params[:drink_again]
+  review.rating = params[:rating]
+  review.comments = params[:comments]
+  review.save!
+
+  status 200
+end			
+          </code></pre>        
+          
+          <p class='spacer' />
+          
+				  <p>
+            This uses ActiveRecord to retrieve the Review that matches given id. We then set all the attributes and save.          
+          </p>             
+          
+        </section> 
+        
+        <section>
+          <h3>DELETE /:id</h3>
+          
+          <p class='spacer' />
+          
+				  <p>
+            Lastly, we need to be able to delete existing reviews.          
+          </p>
+                     
+          <p class='spacer' />          
+          
+          <pre><code>          
+delete '/:id' do
+  review = Review.find(params[:id])
+  return status 404 if review.nil?
+  review.delete	      
+
+  status 200	  	 
+end		
+          </code></pre>                               
+          
+        </section>                                    
+      
+        <section>
+          <h3>That's it. We now have a working API. Let's use it!</h3>
+        </section>      
+        
+        <section>
+          <h3>Angular App</h3>
+          
+          <p>
+            We start with an plain angular app.
+          </p>
+
+          <pre><code>
+    < !doctype html >
+    < html ng-app >
+      < head >
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.1/angular.min.js"></script>
+      < /head >
+      < body >
+        <div>
+          <label>Name:</label>
+          <input type="text" ng-model="yourName" placeholder="Enter a name here">
+          <hr>
+          <h1>Hello {{yourName}}!</h1>
+        </div>
+      < /body >
+    < /html >
+          </code></pre>
+          
+          <p class='spacer' />
+          
+          <p>
+            The ng-app directive defines an AngularJS application.
+          </p>          
+          
+        </section>
+        
+        <section>
+          <h3>So far so good, but nothing to look at.</h3>
+          
+          <p class='spacer' />
+          
+          <pre>
+
+
+    <!doctype html>
+      <html ng-app>
+        <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.1/angular.min.js"></script>
+      </head>
+      <body>
+        <div>
+          <label>Name:</label>
+          <input type="text" ng-model="yourName" placeholder="Enter a name here">
+          <hr>
+          <h1>Hello {{yourName}}!</h1>
+        </div>
+      </body>
+    </html>
+
+
+          </pre>          
+        </section> 
+        
+        <section>
+
+<h3>Data Binding</h3>
+
+<p>
+Data-binding is an automatic way of updating the view whenever the model changes, as well as updating the model whenever the view changes. 
+This is useful because it eliminates DOM manipulation from the list of things you have to worry about.
+</p>
+
+<p class='spacer' />
+
+          <pre><code>          
+<div>
+  <label>Name:</label>
+  <input type="text" ng-model="yourName" placeholder="Enter a name here">
+  <hr>
+  <h1>Hello { {yourName} }!</h1>
+</div>	
+          </code></pre>  
+        
+        </section>    
+        
+        <section>
+          <h3>Let's look at our actual app</h3>
+          
+          <pre><code>
+< !DOCTYPE html >
+< html ng-app="beer_app" >
+  < head >  
+    <meta charset="utf-8">
+    <meta name="author" content="Daniel Weber">	
+    <title>Angular with Grape API</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="bootstrap-3.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+	  <!--[if lt IE 9]>
+	  	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	  <![endif]-->
+
+	  <script src="js/jquery/jquery.min.js"></script>
+	  <script src="js/angular-1.2.16/angular.js"></script>
+	  <script src="js/jquery/jquery-ui.js"></script>
+	  <script src="js/angular-1.2.16/angular-ui.js"></script>
+
+	  <script src="js/angular-1.3.0-beta.18/angular-route.js"></script>
+	  <script src="js/angular-1.3.0-beta.18/angular-resource.js"></script>    
+	  <script src="bootstrap-3.1.1/js/transition.js"></script>
+
+	  <script src="js/controllers/navigation.js"></script>
+	  <script src="js/controllers/reviews.js"></script>
+
+	  <link rel="stylesheet" href="style/jquery-ui.css">
+	  <link rel="stylesheet" href="style/dashboard.css">
+	  <link rel="stylesheet" href="style/main.css">	
+  < /head >
+                                  
+  < body ng-controller="mainCtrl" >
+  
+    <!-- CUSTOM LOADING DIRECTIVE -->
+    <div class="loading-spinner-holder" data-loading >
+      <div class="loading-spinner">
+  	   <center><img src="images/icons/ajax-loader.gif" /></center>
+      </div>
+    </div>
+    <!-- END CUSTOM LOADING DIRECTIVE -->
+  
+    <div class="navbar navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="brand navbar-brand" ng-href="#/">
+  	           <img height="90" src="images/homer_beer.jpg">
+  	        </a>
+          </div>
+          <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right"></ul>
+          </div>
+        </div>
+    </div>
+  
+    <div class="container-fluid">
+        <div class="row">
+          <div class="container col-sm-3 col-md-2 sidebar" ng-controller="navigationCtrl">
+            <ul class="nav nav-sidebar">
+        	    <li ng-repeat="tab in main_navigation_list" ng-class="{active : isSelected(tab)}" ng-click="setSelected($index);setSelectedTab(tab);">
+        	      <a ng-href="#/{ {tab.page} }">{ {tab.title} }</a>
+        	    </li>
+            </ul>
+          </div>
+          <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main flush-left" ng-view></div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/app.js"></script>
+    <script src="js/ui-bootstrap-tpls-0.11.0.js"></script>
+
+  < /body >
+< /html >
+
+
+          </code></pre>                               
+        </section>           
+           
+        <section>
+          <h3>Controllers</h3>
+          
+          <p class='spacer' />
+          
+          <p>
+            Controllers are where we define our app's behavior by defining functions and values.
+          </p>         
+          
+          <p class='spacer' />
+
+<pre><code>          
+angular.module('navigation', []);
+
+angular.module('navigation').controller('navigationCtrl', 
+	function($scope){	
+	    
+  		$scope.main_navigation_list = [     
+  			{ "title": "View Reviews",   "page":"reviews",     "selected": true },
+  			{ "title": "Create New Review",   "page":"create-new-review",     "selected": false }
+  	  ];
+		
+	    $scope.selected = $scope.previous = 0;
+	   	$scope.currentSelectedTab = $scope.main_navigation_list[0];
+		
+	    $scope.setSelectedTab = function(tab){
+	        $scope.currentSelectedTab = tab
+	    }
+	    
+	    $scope.isSelected = function(tab){
+	        if(tab == $scope.currentSelectedTab) return true;	        
+	        return false;
+	    }
+	    
+	    $scope.setSelected = function(index) {		
+	        $scope.previous = $scope.selected;
+	        $scope.selected = index;
+	        $scope.main_navigation_list[$scope.previous].selected = false;
+	        $scope.main_navigation_list[$scope.selected].selected = false;
+	    };		
+		
+  	}
+);          
+</code></pre>          
+        </section>           
+           
+        <section>
+          <h3>ng-view</h3>
+          
+          <p class='spacer' />
+          
+				  <p class='fragment'>
+            ngView is a directive that complements the $route service by including the rendered template of the current route into the main layout (index.html) file.          
+          </p> 
+          
+          <p class='spacer' />
+          
+				  <p class='fragment'>
+            Every time the current route changes, the included view changes with it according to the configuration of the $route service.           
+          </p> 
+          
+          <p class='spacer' />
+          
+				  <p class='fragment'>
+            Requires the ngRoute module to be installed. (<script src="js/angular-1.2.16/angular-route.js"></script>)           
+          </p>    
+          
+          <p class='spacer' />
+          
+          <p class='fragment'>
+            So let's look at the configuration of our $route service.
+          </p>                
+        </section>
+        
+        <section>
+          <h3>ng-view configuration</h3>
+          
+          <p class='spacer' />
+          
+          <p>
+            We are just going to place our route configuration in app.js controller.
+          </p>                           
+          
+          <p class='spacer' />          
+
+<pre><code>          
+var beer_app = angular.module("beer_app", ["ngRoute", "navigation", "reviews"]);
+
+beer_app.config(['$routeProvider',
+function($routeProvider) {
+	$routeProvider.	
+		when('/create-new-review', {
+			templateUrl: 'templates/reviews/new-review.html',
+			controller: 'NewReviewCtrl'
+		}).		
+		when('/reviews', {
+			templateUrl: 'templates/reviews/reviews-list.html',
+			controller: 'ReviewsCtrl'
+		}).
+		when('/reviews/:reviewId', {
+			templateUrl: 'templates/reviews/review-detail.html',
+			controller: 'ReviewDetailCtrl'
+		}).		       																										
+		otherwise({
+			redirectTo: '/reviews'
+		});	
+}]);
+
+function mainCtrl($scope, $http){              
+    
+  $scope.log = function(msg){
+    console.log(msg);
+  };        	
+  
+}        
+</code></pre>          
+        </section> 
+        
+        <section>
+          <p>
+            In our code we've defined several urls and mapped them to views. When we open /#reviews route in browser, Angular automatically matches 
+            it with the route we configured and loads templates/reviews/reviews-list.html template to the div with "ng-view" directive. 
+          </p>
+          
+          <p class='spacer' />
+          
+          <p>
+            It then invokes the given controllers where we can add logic for our views.
+          </p> 
+          
+          <p class='spacer' />
+          
+          <p>
+            The controllers are where we make the connection to our API.
+          </p>                  
+        </section>                  
+
+        <section>
+          <p>
+            Let's look at ReviewsCtrl and focus on the ReviewFactory. It uses angular's resource feature to make calls to our API. To use $resource 
+            inside your controller/service you need to declare a dependency on $resource.
+          </p>  
+          
+          <p class='spacer' />        
+        
+<pre><code>        
+var reviews_route = 'api/v1/reviews/';
+
+var reviews_module = angular.module('reviews', ['ngResource', 'ui.bootstrap']);
+
+reviews_module.factory('ReviewFactory', function ($resource) {
+	return $resource(reviews_route + ':id');
+});
+
+function ReviewsCtrl($scope, $http, $filter, $resource, $location, $routeParams, ReviewFactory){
+  $scope.reviews = ReviewFactory.query();  
+   
+  $scope.sort = {
+      column: '',
+      descending: false
+  };    
+   
+  var log = [];
+  
+  $scope.selectedCls = function(column) {
+      return column == $scope.sort.column && 'sort-' + $scope.sort.descending;
+  };  
+ 
+  $scope.changed_industry = 0; 
+  
+  $scope.showReviewDetail = function(review_id) {         
+    $location.path("/reviews/" + review_id);
+  };
+  
+  $scope.deleteReview = function(review_id) {
+    ReviewFactory.delete({id: review_id});   
+    // Refresh the list to remove deleted item.
+    $scope.reviews = ReviewFactory.query();     
+  }
+  
+  $scope.changeSorting = function(column) {    
+      var sort = $scope.sort;
+
+      if (sort.column == column) {
+          sort.descending = !sort.descending;
+      } else {
+          sort.column = column;
+          sort.descending = false;
+      }      
+  }; 
+  
+  $scope.changeSorting('review.review_id');     	
+}
+</code></pre>        
+        </section>
+        
+        <section>
+          <h3><b>How Does $resource Work?</b></h3>          
+          
+          <p class='spacer' />
+            
+          <p>  
+            The next step is calling the $resource() function with your 
+            REST endpoint, as shown in the following example. This function call returns a $resource class representation which can be used to interact with the REST backend.          
+          </p>
+          
+          <pre><code>
+var reviews_route = 'api/v1/reviews/';
+          
+reviews_module.factory('ReviewFactory', function ($resource) {
+	return $resource(reviews_route + ':id');
+});
+          </code></pre>
+        </section>  
+        
+        <section>
+          <h3><b>How Does $resource Work?</b></h3>
+          
+          <p>
+            The result of the function call is a resource class object which has the following methods by default:
+          </p>
+
+          <p class='spacer' />
+          
+          <ul>
+            <li class='fragment'>get()</li>
+            <li class='fragment'>query()</li>
+            <li class='fragment'>save()</li>
+            <li class='fragment'>delete()</li>
+          </ul>           
+        
+        </section> 
+        
+				<section>
+				  <h3>Using $resource to communicate with API</h3>
+				  
+          <p>
+            So to submit a request for all reviews from our backend we would use:
+          </p>
+                
+          <pre><code>
+$scope.reviews = ReviewFactory.query();
+          </code></pre>                
+                   
+          <p class='spacer' />
+          
+          <p>
+            This makes the following call to our API:
+          </p> 
+          
+          <pre><code>
+GET http://localhost:8000/api/v1/reviews
+          </code></pre>                    
+                    
+				</section>
+        
+				<section>
+          <p>
+            To request a particular review we just pass the id.
+          </p>
+                
+          <pre><code>
+$scope.review = ReviewFactory.get({id: $scope.current_review_id});
+          </code></pre>                
+                   
+          <p class='spacer' />
+          
+          <p>
+            This makes the following call to our API:
+          </p> 
+          
+          <pre><code>
+GET http://localhost:8000/api/v1/reviews/1
+          </code></pre>                    
+                    
+				</section>  
+        
+				<section>
+          <p>
+            To delete a review.
+          </p>
+                
+          <pre><code>
+ReviewFactory.delete({id: $scope.current_review_id});
+          </code></pre>                
+                   
+          <p class='spacer' />
+          
+          <p>
+            This makes the following call to our API:
+          </p> 
+          
+          <pre><code>
+DELETE http://localhost:8000/api/v1/reviews/1
+          </code></pre>                    
+                    
+				</section> 
+        
+				<section>
+				  <h3>Sending a new Review</h3>
+				  
+          <p>
+            We begin with an empty review, but it gets updated via 2 way data binding from our form.
+          </p>
+                
+          <pre><code>
+  $scope.review = {
+    "beer_name": "",
+    "maker": "",
+    "drink_again": false,
+    "rating": "",
+    "comments": ""
+  };                      
+
+  $scope.saveReview = function() {       
+    ReviewFactory.save($scope.review);                                                                
+  }  
+          </code></pre>                
+                   
+          <p class='spacer' />
+          
+          <p>
+            This makes POST to our API passing all necessary fields:
+          </p> 
+          
+          <pre><code>
+POST http://localhost:8000/api/v1/reviews 
+          </code></pre>                    
+                    
+				</section>  
+        
+				<section>
+				  <h3>Updating existing Review</h3>
+				  
+          <p>
+            When the controller is initialized (when page is visited), we retrieve the review. Then 2 way data binding updates our model as user edits. We just need to send updated model.
+          </p>
+                
+          <pre><code>
+ReviewFactory.update({id: $scope.current_review_id},$scope.review); 
+          </code></pre>                
+                   
+          <p class='spacer' />
+          
+          <p>
+            This sends a PUT request with the updated parameters:
+          </p> 
+          
+          <pre><code>
+PUT http://localhost:8000/api/v1/reviews/1 
+          </code></pre>                    
+                    
+				</section>                                              
+                
+        <section>
+          <h3>Class dismissed!</h3>
+        </section>
 
 			</div>
 
